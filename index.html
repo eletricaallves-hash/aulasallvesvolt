@@ -557,7 +557,7 @@
       <h2>Área do Aluno</h2>
       <p>Acesse com o email e senha<br>do seu convite de matrícula.</p>
     </div>
-    <button class="btn-login-netlify" onclick="netlifyIdentity.open('login')">Entrar →</button>
+    <button class="btn-login-netlify" id="btn-entrar">Entrar →</button>
     <div class="login-footer">
       Problemas com o acesso? Entre em contato<br>via WhatsApp: (28) 98100-0929
     </div>
@@ -1003,35 +1003,58 @@
   }
 
   // ===== NETLIFY IDENTITY =====
-
-  // Processa token de convite/recuperação de senha na URL
-  if (window.location.hash && window.location.hash.includes('invite_token')) {
-    netlifyIdentity.on('init', user => {
-      netlifyIdentity.open();
-    });
+  function mostrarLogin() {
+    document.getElementById('login-overlay').classList.remove('hidden');
+  }
+  function esconderLogin() {
+    document.getElementById('login-overlay').classList.add('hidden');
   }
 
-  netlifyIdentity.on('init', user => {
-    if (!user) {
-      document.getElementById('login-overlay').classList.remove('hidden');
-    } else {
-      document.getElementById('login-overlay').classList.add('hidden');
-    }
+  window.addEventListener('load', function() {
+    // Aguarda o widget carregar completamente
+    var tentativas = 0;
+    var intervalo = setInterval(function() {
+      tentativas++;
+      if (typeof netlifyIdentity !== 'undefined') {
+        clearInterval(intervalo);
+
+        // Botão entrar
+        document.getElementById('btn-entrar').addEventListener('click', function() {
+          netlifyIdentity.open('login');
+        });
+
+        // Eventos
+        netlifyIdentity.on('init', function(user) {
+          if (user) { esconderLogin(); } else { mostrarLogin(); }
+        });
+
+        netlifyIdentity.on('login', function(user) {
+          esconderLogin();
+          netlifyIdentity.close();
+          if (window.location.hash) {
+            history.replaceState(null, '', window.location.pathname);
+          }
+        });
+
+        netlifyIdentity.on('logout', function() {
+          mostrarLogin();
+        });
+
+        netlifyIdentity.init();
+
+        // Abre automaticamente se vier de convite
+        var hash = window.location.hash;
+        if (hash && (hash.includes('invite_token') || hash.includes('recovery_token') || hash.includes('confirmation_token'))) {
+          setTimeout(function() { netlifyIdentity.open(); }, 500);
+        }
+
+      } else if (tentativas > 20) {
+        clearInterval(intervalo);
+        console.error('Netlify Identity não carregou');
+      }
+    }, 200);
   });
 
-  netlifyIdentity.on('login', user => {
-    document.getElementById('login-overlay').classList.add('hidden');
-    netlifyIdentity.close();
-    if (window.location.hash) {
-      history.replaceState(null, '', window.location.pathname);
-    }
-  });
-
-  netlifyIdentity.on('logout', () => {
-    document.getElementById('login-overlay').classList.remove('hidden');
-  });
-
-  netlifyIdentity.init();
   init();
 </script>
 </body>
