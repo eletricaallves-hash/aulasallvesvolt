@@ -6,7 +6,6 @@
 <title>Eletricista Residencial — Plataforma de Aulas</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
-<script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
@@ -78,7 +77,36 @@
     color: var(--muted);
     line-height: 1.5;
   }
-  .btn-login-netlify {
+  .login-form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .login-input {
+    width: 100%;
+    background: var(--dark3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-family: 'Barlow', sans-serif;
+    font-size: 15px;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.2s;
+    letter-spacing: 0.08em;
+  }
+  .login-input::placeholder { color: var(--muted2); letter-spacing: 0; }
+  .login-input:focus { border-color: var(--yellow); }
+  .login-input.error { border-color: #E8423A; }
+  .login-error {
+    font-size: 12px;
+    color: #E8423A;
+    text-align: center;
+    display: none;
+  }
+  .login-error.show { display: block; }
+  .btn-login {
     width: 100%;
     background: var(--yellow);
     color: var(--black);
@@ -92,7 +120,7 @@
     transition: opacity 0.15s;
     letter-spacing: 0.02em;
   }
-  .btn-login-netlify:hover { opacity: 0.88; }
+  .btn-login:hover { opacity: 0.88; }
   .login-footer {
     font-size: 12px;
     color: var(--muted2);
@@ -555,9 +583,13 @@
     </div>
     <div class="login-heading">
       <h2>Área do Aluno</h2>
-      <p>Acesse com o email e senha<br>do seu convite de matrícula.</p>
+      <p>Digite a senha de acesso enviada<br>no seu email após a compra.</p>
     </div>
-    <button class="btn-login-netlify" id="btn-entrar">Entrar →</button>
+    <div class="login-form">
+      <input type="password" id="login-input" class="login-input" placeholder="Senha de acesso" onkeydown="if(event.key==='Enter') doLogin()"/>
+      <div class="login-error" id="login-error">Senha incorreta. Verifique seu email.</div>
+      <button class="btn-login" onclick="doLogin()">Entrar →</button>
+    </div>
     <div class="login-footer">
       Problemas com o acesso? Entre em contato<br>via WhatsApp: (28) 98100-0929
     </div>
@@ -1002,42 +1034,32 @@
     document.getElementById('overlay').classList.toggle('open');
   }
 
-  // ===== NETLIFY IDENTITY =====
-  // Registra eventos ANTES do init() — ordem obrigatória
-  netlifyIdentity.on('init', function(user) {
-    if (user) {
+  // ===== LOGIN SENHA ÚNICA =====
+  const SENHA = 'eletricaallves2026';
+
+  function checkAuth() {
+    if (sessionStorage.getItem('av_auth') === '1') {
       document.getElementById('login-overlay').classList.add('hidden');
-    } else {
-      document.getElementById('login-overlay').classList.remove('hidden');
     }
-  });
-
-  netlifyIdentity.on('login', function(user) {
-    document.getElementById('login-overlay').classList.add('hidden');
-    netlifyIdentity.close();
-    if (window.location.hash) {
-      history.replaceState(null, '', window.location.pathname);
-    }
-  });
-
-  netlifyIdentity.on('logout', function() {
-    document.getElementById('login-overlay').classList.remove('hidden');
-  });
-
-  // Inicializa o widget
-  netlifyIdentity.init({ logo: false });
-
-  // Botão entrar — abre o popup do widget
-  document.getElementById('btn-entrar').addEventListener('click', function() {
-    netlifyIdentity.open('login');
-  });
-
-  // Abre automaticamente se vier de link de convite
-  var hash = window.location.hash;
-  if (hash && (hash.includes('invite_token') || hash.includes('recovery_token') || hash.includes('confirmation_token'))) {
-    netlifyIdentity.open();
   }
 
+  function doLogin() {
+    var input = document.getElementById('login-input');
+    var erro = document.getElementById('login-error');
+    if (input.value === SENHA) {
+      sessionStorage.setItem('av_auth', '1');
+      document.getElementById('login-overlay').classList.add('hidden');
+      input.classList.remove('error');
+      erro.classList.remove('show');
+    } else {
+      input.classList.add('error');
+      erro.classList.add('show');
+      input.focus();
+      input.select();
+    }
+  }
+
+  checkAuth();
   init();
 </script>
 </body>
