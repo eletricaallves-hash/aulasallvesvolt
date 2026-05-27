@@ -1003,57 +1003,40 @@
   }
 
   // ===== NETLIFY IDENTITY =====
-  function mostrarLogin() {
-    document.getElementById('login-overlay').classList.remove('hidden');
-  }
-  function esconderLogin() {
-    document.getElementById('login-overlay').classList.add('hidden');
-  }
-
-  window.addEventListener('load', function() {
-    // Aguarda o widget carregar completamente
-    var tentativas = 0;
-    var intervalo = setInterval(function() {
-      tentativas++;
-      if (typeof netlifyIdentity !== 'undefined') {
-        clearInterval(intervalo);
-
-        // Botão entrar
-        document.getElementById('btn-entrar').addEventListener('click', function() {
-          netlifyIdentity.open('login');
-        });
-
-        // Eventos
-        netlifyIdentity.on('init', function(user) {
-          if (user) { esconderLogin(); } else { mostrarLogin(); }
-        });
-
-        netlifyIdentity.on('login', function(user) {
-          esconderLogin();
-          netlifyIdentity.close();
-          if (window.location.hash) {
-            history.replaceState(null, '', window.location.pathname);
-          }
-        });
-
-        netlifyIdentity.on('logout', function() {
-          mostrarLogin();
-        });
-
-        netlifyIdentity.init();
-
-        // Abre automaticamente se vier de convite
-        var hash = window.location.hash;
-        if (hash && (hash.includes('invite_token') || hash.includes('recovery_token') || hash.includes('confirmation_token'))) {
-          setTimeout(function() { netlifyIdentity.open(); }, 500);
-        }
-
-      } else if (tentativas > 20) {
-        clearInterval(intervalo);
-        console.error('Netlify Identity não carregou');
-      }
-    }, 200);
+  // Registra eventos ANTES do init() — ordem obrigatória
+  netlifyIdentity.on('init', function(user) {
+    if (user) {
+      document.getElementById('login-overlay').classList.add('hidden');
+    } else {
+      document.getElementById('login-overlay').classList.remove('hidden');
+    }
   });
+
+  netlifyIdentity.on('login', function(user) {
+    document.getElementById('login-overlay').classList.add('hidden');
+    netlifyIdentity.close();
+    if (window.location.hash) {
+      history.replaceState(null, '', window.location.pathname);
+    }
+  });
+
+  netlifyIdentity.on('logout', function() {
+    document.getElementById('login-overlay').classList.remove('hidden');
+  });
+
+  // Inicializa o widget
+  netlifyIdentity.init({ logo: false });
+
+  // Botão entrar — abre o popup do widget
+  document.getElementById('btn-entrar').addEventListener('click', function() {
+    netlifyIdentity.open('login');
+  });
+
+  // Abre automaticamente se vier de link de convite
+  var hash = window.location.hash;
+  if (hash && (hash.includes('invite_token') || hash.includes('recovery_token') || hash.includes('confirmation_token'))) {
+    netlifyIdentity.open();
+  }
 
   init();
 </script>
