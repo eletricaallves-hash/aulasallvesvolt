@@ -1003,6 +1003,14 @@
   }
 
   // ===== NETLIFY IDENTITY =====
+
+  // Processa token de convite/recuperação de senha na URL
+  if (window.location.hash && window.location.hash.includes('invite_token')) {
+    netlifyIdentity.on('init', user => {
+      netlifyIdentity.open();
+    });
+  }
+
   netlifyIdentity.on('init', user => {
     if (!user) {
       document.getElementById('login-overlay').classList.remove('hidden');
@@ -1014,6 +1022,9 @@
   netlifyIdentity.on('login', user => {
     document.getElementById('login-overlay').classList.add('hidden');
     netlifyIdentity.close();
+    if (window.location.hash) {
+      history.replaceState(null, '', window.location.pathname);
+    }
   });
 
   netlifyIdentity.on('logout', () => {
