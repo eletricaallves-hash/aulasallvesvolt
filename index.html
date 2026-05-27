@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Eletricista Residencial — Plataforma de Aulas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --black: #0a0a0a;
+    --dark: #111214;
+    --dark2: #1a1c1f;
+    --dark3: #222528;
+    --border: rgba(255,255,255,0.07);
+    --yellow: #F5C842;
+    --yellow2: #d4a800;
+    --green: #1DB87A;
+    --text: #f0ece4;
+    --muted: #8a8680;
+    --muted2: #4a4845;
+    --sidebar-w: 340px;
+  }
+  html { scroll-behavior: smooth; }
+
+  /* ===== LOGIN OVERLAY ===== */
+  #login-overlay {
+    position: fixed;
+    inset: 0;
+    background: var(--black);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  #login-overlay.hidden { display: none; }
+  .login-box {
+    width: 100%;
+    max-width: 380px;
+    background: var(--dark2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 40px 32px 36px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+    text-align: center;
+  }
+  .login-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 0.06em;
+    color: var(--text);
+  }
+  .login-logo-icon {
+    width: 36px; height: 36px;
+    background: var(--yellow);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; color: var(--black); font-weight: 700;
+  }
+  .login-heading h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 0.04em;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+  .login-heading p {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+  .btn-login-netlify {
+    width: 100%;
+    background: var(--yellow);
+    color: var(--black);
+    font-family: 'Barlow', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    padding: 13px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: opacity 0.15s;
+    letter-spacing: 0.02em;
+  }
+  .btn-login-netlify:hover { opacity: 0.88; }
+  .login-footer {
+    font-size: 12px;
+    color: var(--muted2);
+    line-height: 1.5;
+  }
+
+  body {
+    background: var(--dark);
+    color: var(--text);
+    font-family: 'Barlow', sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* ===== TOPBAR ===== */
+  .topbar {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 56px;
+    background: var(--black);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    z-index: 200;
+    gap: 12px;
+  }
+  .topbar-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    letter-spacing: 0.06em;
+    color: var(--text);
+    text-decoration: none;
+  }
+  .logo-icon {
+    width: 32px; height: 32px;
+    background: var(--yellow);
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; color: var(--black); font-weight: 700;
+  }
+  .topbar-progress {
+    flex: 1;
+    max-width: 300px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .progress-bar {
+    flex: 1;
+    height: 4px;
+    background: var(--dark3);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--yellow);
+    border-radius: 2px;
+    transition: width 0.4s ease;
+  }
+  .progress-text {
+    font-size: 12px;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  .btn-apostilas {
+    background: var(--yellow);
+    color: var(--black);
+    font-weight: 600;
+    font-size: 13px;
+    padding: 8px 16px;
+    border-radius: 6px;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: opacity 0.15s;
+    border: none;
+    cursor: pointer;
+    font-family: 'Barlow', sans-serif;
+  }
+  .btn-apostilas:hover { opacity: 0.85; }
+  .menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    color: var(--text);
+    font-size: 22px;
+    cursor: pointer;
+    padding: 4px;
+  }
+
+  /* ===== LAYOUT ===== */
+  .layout {
+    display: flex;
+    padding-top: 56px;
+    min-height: 100vh;
+  }
+
+  /* ===== SIDEBAR ===== */
+  .sidebar {
+    width: var(--sidebar-w);
+    min-width: var(--sidebar-w);
+    background: var(--black);
+    border-right: 1px solid var(--border);
+    height: calc(100vh - 56px);
+    position: fixed;
+    top: 56px;
+    left: 0;
+    overflow-y: auto;
+    z-index: 100;
+    transition: transform 0.3s ease;
+  }
+  .sidebar::-webkit-scrollbar { width: 4px; }
+  .sidebar::-webkit-scrollbar-track { background: transparent; }
+  .sidebar::-webkit-scrollbar-thumb { background: var(--dark3); border-radius: 2px; }
+
+  .sidebar-header {
+    padding: 20px 20px 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .sidebar-title {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+  .sidebar-course {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .module-group { border-bottom: 1px solid var(--border); }
+
+  .module-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 20px;
+    cursor: pointer;
+    transition: background 0.15s;
+    user-select: none;
+    gap: 10px;
+  }
+  .module-header:hover { background: var(--dark2); }
+
+  .module-info { flex: 1; }
+  .module-tag {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--yellow2);
+    margin-bottom: 2px;
+  }
+  .module-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1.3;
+  }
+  .module-count {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+  .module-arrow {
+    color: var(--muted);
+    font-size: 12px;
+    transition: transform 0.2s;
+    flex-shrink: 0;
+  }
+  .module-group.open .module-arrow { transform: rotate(180deg); }
+
+  .lesson-list {
+    display: none;
+    background: var(--dark);
+  }
+  .module-group.open .lesson-list { display: block; }
+
+  .lesson-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 20px 10px 28px;
+    cursor: pointer;
+    transition: background 0.15s;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+  }
+  .lesson-item:hover { background: var(--dark2); }
+  .lesson-item.active {
+    background: rgba(245,200,66,0.08);
+    border-left: 2px solid var(--yellow);
+    padding-left: 26px;
+  }
+
+  .lesson-check {
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    border: 1.5px solid var(--muted2);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.2s;
+  }
+  .lesson-item.done .lesson-check {
+    background: var(--green);
+    border-color: var(--green);
+  }
+  .lesson-item.active .lesson-check {
+    border-color: var(--yellow);
+  }
+  .check-svg { display: none; }
+  .lesson-item.done .check-svg { display: block; }
+  .lesson-num { display: block; }
+  .lesson-item.done .lesson-num { display: none; }
+
+  .lesson-title {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.4;
+    flex: 1;
+  }
+  .lesson-item.active .lesson-title { color: var(--text); }
+  .lesson-item.done .lesson-title { color: var(--muted); }
+
+  /* ===== MAIN CONTENT ===== */
+  .main {
+    margin-left: var(--sidebar-w);
+    flex: 1;
+    min-height: calc(100vh - 56px);
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* VIDEO AREA */
+  .video-area {
+    background: #000;
+    position: relative;
+    width: 100%;
+  }
+  .video-wrapper {
+    position: relative;
+    width: 100%;
+    padding-bottom: 56.25%;
+    background: #000;
+  }
+  .video-wrapper iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+  .video-placeholder {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: var(--black);
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .video-placeholder:hover { background: #0d0d0d; }
+  .play-btn {
+    width: 64px; height: 64px;
+    background: rgba(245,200,66,0.15);
+    border: 2px solid var(--yellow);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 16px;
+    transition: all 0.2s;
+  }
+  .video-placeholder:hover .play-btn {
+    background: rgba(245,200,66,0.25);
+    transform: scale(1.05);
+  }
+  .play-btn svg { margin-left: 4px; }
+  .video-placeholder-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text);
+    text-align: center;
+    max-width: 600px;
+    padding: 0 20px;
+  }
+  .video-placeholder-sub {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 6px;
+  }
+
+  /* LESSON CONTENT */
+  .lesson-content {
+    padding: 28px 36px;
+    max-width: 860px;
+    flex: 1;
+  }
+
+  .lesson-breadcrumb {
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 12px;
+    letter-spacing: 0.03em;
+  }
+  .lesson-breadcrumb span { color: var(--yellow2); }
+
+  .lesson-main-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 30px;
+    letter-spacing: 0.02em;
+    line-height: 1.1;
+    margin-bottom: 20px;
+    color: var(--text);
+  }
+
+  .lesson-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 28px;
+  }
+
+  .btn-done {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--green);
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'Barlow', sans-serif;
+    transition: opacity 0.15s;
+  }
+  .btn-done:hover { opacity: 0.85; }
+  .btn-done.marked {
+    background: var(--dark3);
+    color: var(--muted);
+  }
+
+  .btn-next {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--dark3);
+    color: var(--text);
+    border: 1px solid var(--border);
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: 'Barlow', sans-serif;
+    transition: background 0.15s;
+  }
+  .btn-next:hover { background: var(--dark2); }
+
+  .btn-ext {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: none;
+    color: var(--yellow);
+    border: 1px solid rgba(245,200,66,0.3);
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: 'Barlow', sans-serif;
+    text-decoration: none;
+    transition: background 0.15s;
+  }
+  .btn-ext:hover { background: rgba(245,200,66,0.08); }
+
+  .lesson-divider {
+    height: 1px;
+    background: var(--border);
+    margin: 24px 0;
+  }
+
+  .nav-lessons {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .nav-card {
+    flex: 1;
+    min-width: 200px;
+    background: var(--dark2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    text-decoration: none;
+  }
+  .nav-card:hover { border-color: rgba(245,200,66,0.3); background: var(--dark3); }
+  .nav-card-label {
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 4px;
+  }
+  .nav-card-title {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+    line-height: 1.4;
+  }
+  .nav-card.next-card { text-align: right; }
+
+  /* ===== OVERLAY ===== */
+  .sidebar-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 90;
+  }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 768px) {
+    :root { --sidebar-w: 300px; }
+    .sidebar {
+      transform: translateX(-100%);
+    }
+    .sidebar.open { transform: translateX(0); }
+    .sidebar-overlay.open { display: block; }
+    .main { margin-left: 0; }
+    .menu-toggle { display: block; }
+    .topbar-progress { display: none; }
+    .lesson-content { padding: 20px 16px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- LOGIN OVERLAY -->
+<div id="login-overlay">
+  <div class="login-box">
+    <div class="login-logo">
+      <div class="login-logo-icon">⚡</div>
+      AllvesVolt
+    </div>
+    <div class="login-heading">
+      <h2>Área do Aluno</h2>
+      <p>Acesse com o email e senha<br>do seu convite de matrícula.</p>
+    </div>
+    <button class="btn-login-netlify" onclick="netlifyIdentity.open('login')">Entrar →</button>
+    <div class="login-footer">
+      Problemas com o acesso? Entre em contato<br>via WhatsApp: (28) 98100-0929
+    </div>
+  </div>
+</div>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <button class="menu-toggle" onclick="toggleSidebar()" aria-label="Menu">☰</button>
+  <a href="#" class="topbar-logo">
+    <div class="logo-icon">⚡</div>
+    Eletricista Residencial
+  </a>
+  <div class="topbar-progress">
+    <div class="progress-bar">
+      <div class="progress-fill" id="prog-fill" style="width:0%"></div>
+    </div>
+    <span class="progress-text" id="prog-text">0/30</span>
+  </div>
+  <a href="https://wa.me/5528981000929?text=Preciso+acessar+as+apostilas" target="_blank" class="btn-apostilas">📄 Apostilas</a>
+</header>
+
+<div class="sidebar-overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+<div class="layout">
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-title">Conteúdo do curso</div>
+      <div class="sidebar-course">Eletricista Residencial</div>
+    </div>
+
+    <!-- MODULE 1 -->
+    <div class="module-group open" id="mod-1">
+      <div class="module-header" onclick="toggleModule('mod-1')">
+        <div class="module-info">
+          <div class="module-tag">Módulo 01</div>
+          <div class="module-name">Fundamentos Elétricos</div>
+          <div class="module-count">6 aulas</div>
+        </div>
+        <span class="module-arrow">▼</span>
+      </div>
+      <div class="lesson-list">
+        <div class="lesson-item active" onclick="selectLesson(this, 1, 'Grandezas Elétricas e Conceito Atômico', 'Módulo 01 — Fundamentos Elétricos')" data-idx="0">
+          <div class="lesson-check"><span class="lesson-num" style="font-size:10px;color:var(--muted)">1</span><svg class="check-svg" width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <span class="lesson-title">Grandezas Elétricas e Conceito Atômico</span>
+        </div>
+        <div class="lesson-item" onclick="selectLesson(this, 2, 'Diferença de Corrente Contínua e Alternada', 'Módulo 01 — Fundamentos Elétricos')" data-idx="1">
+          <div class="lesson-check"><span class="lesson-num" style="font-size:10px;color:var(--muted)">2</span><svg class="check-svg" width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <span class="lesson-title">Diferença de Corrente Contínua e Alternada</span>
+        </div>
+        <div class="lesson-item" onclick="selectLesson(this, 3, 'Cálculos Básicos da Elétrica (Triângulo da Tensão e da Potência)', 'Módulo 01 — Fundamentos Elétricos')" data-idx="2">
+          <div class="lesson-check"><span class="lesson-num" style="font-size:10px;color:var(--muted)">3</span><svg class="check-svg" width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <span class="lesson-title">Cálculos Básicos da Elétrica (Triângulo da Tensão e da Potência)</span>
+        </div>
+        <div class="lesson-item" onclick="selectLesson(this, 4, 'Condutores Elétricos: Tipos e Padrão de Cores', 'Módulo 01 — Fundamentos Elétricos')" data-idx="3">
+          <div class="lesson-check"><span class="lesson-num" style="font-size:10px;color:var(--muted)">4</span><svg class="check-svg" width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <span class="lesson-title">Condutores Elétricos: Tipos (Barramento, Cabo e Fio) e Padrão de Cores</span>
+        </div>
+        <div class="lesson-item" onclick="selectLesson(this, 5, 'Emendas Elétricas (Fio a Fio) e Isolantes Elétricos', 'Módulo 01 — Fundamentos Elétricos')" data-idx="4">
+          <div class="lesson-check"><span class="lesson-num" style="font-size:10px;color:var(--muted)">5</span><svg class="check-svg" width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <span class="lesson-title">Emendas Elétricas (Fio a Fio) e Isolantes Elétricos</span>
+        </div>
+        <div class="lesson-item" onclick="selectLesson(this, 6, 'Emendas com Conectores Elétricos', 'Módulo 01 — Fundamentos Elétricos')" data-idx="5">
+          <div class="lesson-check"><span class="lesson-num" style="font-size:10px;color:var(--muted)">6</span><svg class="check-svg" width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <span class="lesson-title">Emendas com Conectores Elétricos</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODULE 2 -->
+    <div class="module-group" id="mod-2">
+      <div class="module-header" onclick="toggleModule('mod-2')">
+        <div class="module-info">
+          <div class="module-tag">Módulo 02</div>
+          <div class="module-name">Normas e Segurança</div>
+          <div class="module-count">7 aulas</div>
+        </div>
+        <span class="module-arrow">▼</span>
+      </div>
+      <div class="lesson-list">
+        <div class="lesson-item" onclick="selectLesson(this, 7, 'Dimensionamento de Cabos (Conforme NBR-5410)', 'Módulo 02 — Normas e Segurança')" data-idx="6">
+          <div class="lesson-check"><span class="lesson-num" style="font-size:10px;color:var(--muted)">7</span><svg class="check-svg" width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <span class="lesson-title">Dimensionamento de Cabos (Conforme NBR-5410)</span>
+        </div>
+        <div class="lesson-item" onclick="selectLesson(this, 8, 'Segurança em Serviços Elétricos e EPIs (NR-10)', 'Módulo 02 — Normas e Segurança')" data-idx="7">
+          <div class="lesson-check"><span class="lesson-num" style="font-size:10px;color:var(--muted)">8</span><svg class="check-svg" width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <span class="lesson-title">Segurança em Serviços Elétricos e EPIs (NR-10)</span>
+        </div>
+        <div class="lesson-item" onclick="selectLesson(this, 9, 'Disjuntores: Tipos, Aplicação, Função, Funcionamento e Dimensionamento', 'Módulo 02 — Normas e Segurança')" data-idx="8">
+          <div class="lesson-check"><span class="lesson-num" style="font-size:10px;color:var(--muted)">9</span><svg class="check-svg" width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <span class="lesson-title">Disjuntores: Tipos, Aplicação, Função e Dimensionamento</span>
+        </div>
+        <div class="lesson-item" onclick="selectLesson(this, 10, 'DPS: Tipos, Aplicação, Função, Funcionamento e Dimensionamento', 'Módulo 02 — Normas e Segurança')" data-idx="9">
+          <div class="lesson-check"><span class="lesson-num" style="font-size:10px;color:var(--muted)">10</span><svg class="check-svg" width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <span class="lesson-title">DPS: Tipos, Aplicação, Função e Dimensionamento</span>
+        </div>
+        <div class="lesson-item" onclick="selectLesson(this, 11, 'IDR: Tipos, Aplicação, Função, Funcionamento e Dimensionamento', 'Módulo 02 — Normas e Segurança')" data-idx="10">
+          <div class="lesson-check"><span class="lesson-num" style="font-size:10px;color:var(--muted)">11</span><svg class="check-svg" width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <span class="lesson-title">IDR: Tipos, Aplicação, Função e Dimensionamento</span>
+        </div>
+        <div class="lesson-item" onclick="selectLesson(this, 12, 'Ferramentas Básicas de um Eletricista e a Função de Cada Uma', 'Módulo 02 — Normas e Segurança')" data-idx="11">
+          <div class="lesson-check"><span class="lesson-num" style="font-size:10px;color:var(--muted)">12</span><svg class="check-svg" width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <span class="lesson-title">Ferramentas Básicas de um Eletricista e a Função de Cada Uma</span>
+        </div>
+        <div class="lesson-item" onclick="selectLesson(this, 13, 'Como Usar Multímetro e Alicate Amperímetro', 'Módulo 02 — Normas e Segurança')" data-idx="12">
+          <div class="lesson-check"><span class="lesson-num" style="font-size:10px;color:var(--muted)">13</span><svg class="check-svg" width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <span class="lesson-title">Como Usar Multímetro e Alicate Amperímetro</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODULE 3 -->
+    <div class="module-group" id="mod-3">
+      <div class="module-header" onclick="toggleModule('mod-3')">
+        <div class="module-info">
+          <div class="module-tag">Módulo 03</div>
+          <div class="module-name">Interruptores e Tomadas</div>
+          <div class="module-count">7 aulas</div>
+        </div>
+        <span class="module-arrow">▼</span>
+      </div>
+      <div class="lesson-list">
+        <div class="lesson-item" onclick="selectLesson(this, 14, 'Instalação de Interruptor Simples', 'Módulo 03 — Interruptores e Tomadas')" data-idx="13">
+          <div class="lesson-check"><span class="lesson-num" style="font-size:10px;color:var(--muted)">14</span><svg class="check-svg" width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <span class="lesson-title">Instalação de Interruptor Simples</span>
+        </div>
+        <div class="lesson-item" onclick="selectLesson(this, 15, 'Instalação de Interruptor Duplo e Triplo', 'Módulo 03 — Interruptores e Tomadas')" data-idx="14">
+          <div class="lesson-check"><span class="lesson-num" style="font-size:10px;color:var(--muted)">15</span><svg class="check-svg" width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <span class="lesson-title">Instalação de Interruptor Duplo e Triplo</span>
+        </div>
+        <div class="lesson-item" onclick="selectLesson(this, 16, 'Instalação de Interruptor Paralelo (Three-Way) e Intermediário (Four-Way)', 'Módulo 03 — Interruptores e Tomadas')" data-idx="15">
+          <div class="lesson-check"><span class="lesson-num" style="font-size:10px;color:var(--muted)">16</span><svg class="check-svg" width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <span class="lesson-title">Instalação de Interruptor Paralelo (Three-Way) e Intermediário (Four-Way)</span>
+        </div>
+        <div class="lesson-item" onclick="selectLesson(this, 17, 'Instalação de Tomadas Conforme NBR-14136 e Divisão de Circuito (NBR-5410)', 'Módulo 03 — Interruptores e Tomadas')" data-idx="16">
+          <div class="lesson-check"><span class="lesson-num" style="font-size:10px;color:var(--muted)">17</span><svg class="check-svg" width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <span class="lesson-title">Instalação de Tomadas Conforme NBR-14136 e Divisão de Circuito</span>
+        </div>
+        <div class="lesson-item" onclick="selectLesson(this, 18, 'Instalação de Tomadas Simples, Dupla e Tripla (10A e 20A) na Prática', 'Módulo 03 — Interruptores e Tomadas')" data-idx="17">
+          <div class="lesson-check"><span class="lesson-num" style="font-size:10px;color:var(--muted)">18</span><svg class="check-svg" width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <span class="lesson-title">Instalação de Tomadas Simples, Dupla e Tripla (10A e 20A) na Prática</span>
+        </div>
+        <div class="lesson-item" onclick="selectLesson(this, 19, 'Instalação de Tomada com Interruptor no Mesmo Ponto', 'Módulo 03 — Interruptores e Tomadas')" data-idx="18">
+          <div class="lesson-check"><span class="lesson-num" style="font-size:10px;color:var(--muted)">19</span><svg class="check-svg" width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <span class="lesson-title">Instalação de Tomada com Interruptor no Mesmo Ponto</span>
+        </div>
+        <div class="lesson-item" onclick="selectLesson(this, 20, 'Instalação de Sensor de Presença (Com e Sem Interruptor)', 'Módulo 03 — Interruptores e Tomadas')" data-idx="19">
+          <div class="lesson-check"><span class="lesson-num" style="font-size:10px;color:var(--muted)">20</span><svg class="check-svg" width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <span class="lesson-title">Instalação de Sensor de Presença (Com e Sem Interruptor)</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODULE 4 -->
+    <div class="module-group" id="mod-4">
+      <div class="module-header" onclick="toggleModule('mod-4')">
+        <div class="module-info">
+          <div class="module-tag">Módulo 04</div>
+          <div class="module-name">Instalações Avançadas</div>
+          <div class="module-count">5 aulas</div>
+        </div>
+        <span class="module-arrow">▼</span>
+      </div>
+      <div class="lesson-list">
+        <div class="lesson-item" onclick="selectLesson(this, 21, 'Instalação de Ventilador de Teto', 'Módulo 04 — Instalações Avançadas')" data-idx="20">
+          <div class="lesson-check"><span class="lesson-num" style="font-size:10px;color:var(--muted)">21</span><svg class="check-svg" width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <span class="lesson-title">Instalação de Ventilador de Teto</span>
+        </div>
+        <div class="lesson-item" onclick="selectLesson(this, 22, 'Instalação de Ar Condicionado Split', 'Módulo 04 — Instalações Avançadas')" data-idx="21">
+          <div class="lesson-check"><span class="lesson-num" style="font-size:10px;color:var(--muted)">22</span><svg class="check-svg" width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <span class="lesson-title">Instalação de Ar Condicionado Split</span>
+        </div>
+        <div class="lesson-item" onclick="selectLesson(this, 23, 'Troca de Chuveiro em Situação Realista com Problemas', 'Módulo 04 — Instalações Avançadas')" data-idx="22">
+          <div class="lesson-check"><span class="lesson-num" style="font-size:10px;color:var(--muted)">23</span><svg class="check-svg" width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <span class="lesson-title">Troca de Chuveiro em Situação Realista com Problemas</span>
+        </div>
+        <div class="lesson-item" onclick="selectLesson(this, 24, 'Instalação de Campainha e Interfone', 'Módulo 04 — Instalações Avançadas')" data-idx="23">
+          <div class="lesson-check"><span class="lesson-num" style="font-size:10px;color:var(--muted)">24</span><svg class="check-svg" width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <span class="lesson-title">Instalação de Campainha e Interfone</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODULE 5 -->
+    <div class="module-group" id="mod-5">
+      <div class="module-header" onclick="toggleModule('mod-5')">
+        <div class="module-info">
+          <div class="module-tag">Módulo 05</div>
+          <div class="module-name">Aterramento e Quadros</div>
+          <div class="module-count">6 aulas</div>
+        </div>
+        <span class="module-arrow">▼</span>
+      </div>
+      <div class="lesson-list">
+        <div class="lesson-item" onclick="selectLesson(this, 25, 'Reais Funções do Aterramento (Diferenças entre Esquema TT e TN)', 'Módulo 05 — Aterramento e Quadros')" data-idx="24">
+          <div class="lesson-check"><span class="lesson-num" style="font-size:10px;color:var(--muted)">25</span><svg class="check-svg" width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <span class="lesson-title">Reais Funções do Aterramento (Diferenças entre Esquema TT e TN)</span>
+        </div>
+        <div class="lesson-item" onclick="selectLesson(this, 26, 'Passo a Passo de Como Fazer Aterramento TN-S', 'Módulo 05 — Aterramento e Quadros')" data-idx="25">
+          <div class="lesson-check"><span class="lesson-num" style="font-size:10px;color:var(--muted)">26</span><svg class="check-svg" width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <span class="lesson-title">Passo a Passo de Como Fazer Aterramento TN-S</span>
+        </div>
+        <div class="lesson-item" onclick="selectLesson(this, 27, 'Saiba o Que Fazer Quando Não Tem Aterramento', 'Módulo 05 — Aterramento e Quadros')" data-idx="26">
+          <div class="lesson-check"><span class="lesson-num" style="font-size:10px;color:var(--muted)">27</span><svg class="check-svg" width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <span class="lesson-title">Saiba o Que Fazer Quando Não Tem Aterramento</span>
+        </div>
+        <div class="lesson-item" onclick="selectLesson(this, 28, 'Dimensionamento de Dispositivos de Quadro de Distribuição Monofásico', 'Módulo 05 — Aterramento e Quadros')" data-idx="27">
+          <div class="lesson-check"><span class="lesson-num" style="font-size:10px;color:var(--muted)">28</span><svg class="check-svg" width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <span class="lesson-title">Dimensionamento de Dispositivos de Quadro Monofásico</span>
+        </div>
+        <div class="lesson-item" onclick="selectLesson(this, 29, 'Instalação de Quadro de Distribuição Monofásico na Prática', 'Módulo 05 — Aterramento e Quadros')" data-idx="28">
+          <div class="lesson-check"><span class="lesson-num" style="font-size:10px;color:var(--muted)">29</span><svg class="check-svg" width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <span class="lesson-title">Instalação de Quadro de Distribuição Monofásico na Prática</span>
+        </div>
+        <div class="lesson-item" onclick="selectLesson(this, 30, 'Dimensionamento de Dispositivos de Quadro Bifásico', 'Módulo 05 — Aterramento e Quadros')" data-idx="29">
+          <div class="lesson-check"><span class="lesson-num" style="font-size:10px;color:var(--muted)">30</span><svg class="check-svg" width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <span class="lesson-title">Dimensionamento de Dispositivos de Quadro Bifásico</span>
+        </div>
+      </div>
+    </div>
+
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <div class="video-area">
+      <div class="video-wrapper">
+        <div class="video-placeholder" id="video-placeholder" onclick="openVideo()">
+          <div class="play-btn">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <path d="M8 5L19 12L8 19V5Z" fill="#F5C842"/>
+            </svg>
+          </div>
+          <div class="video-placeholder-title" id="vp-title">Grandezas Elétricas e Conceito Atômico</div>
+          <div class="video-placeholder-sub">Clique para assistir • Aula 1 de 30</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lesson-content">
+      <div class="lesson-breadcrumb"><span id="bc-module">Módulo 01 — Fundamentos Elétricos</span></div>
+      <h1 class="lesson-main-title" id="lesson-title">Grandezas Elétricas e Conceito Atômico</h1>
+
+      <div class="lesson-actions">
+        <button class="btn-done" id="btn-done" onclick="markDone()">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7L5.5 10.5L12 3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Marcar como concluída
+        </button>
+        <button class="btn-next" onclick="nextLesson()">
+          Próxima aula →
+        </button>
+        <a href="#" id="btn-ext" onclick="window.open('https://drive.google.com/file/d/'+videoLinks[currentIdx]+'/view','_blank'); return false;" class="btn-ext">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 11L11 3M11 3H6M11 3V8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Abrir vídeo externo
+        </a>
+      </div>
+
+      <div class="lesson-divider"></div>
+
+      <div class="nav-lessons">
+        <div class="nav-card" id="nav-prev" onclick="prevLesson()">
+          <div class="nav-card-label">← Aula anterior</div>
+          <div class="nav-card-title" id="nav-prev-title">—</div>
+        </div>
+        <div class="nav-card next-card" id="nav-next" onclick="nextLesson()">
+          <div class="nav-card-label">Próxima aula →</div>
+          <div class="nav-card-title" id="nav-next-title">Diferença de Corrente Contínua e Alternada</div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+  const lessons = [];
+  document.querySelectorAll('.lesson-item').forEach(el => {
+    lessons.push({
+      el,
+      num: parseInt(el.getAttribute('onclick').match(/selectLesson\(this, (\d+)/)[1]),
+      title: el.getAttribute('onclick').match(/'([^']+)'/)[1],
+      module: el.getAttribute('onclick').match(/'([^']+)',\s*'([^']+)'/)[2]
+    });
+  });
+
+  let currentIdx = 0;
+  const completed = new Set(JSON.parse(localStorage.getItem('completed') || '[]'));
+
+  function init() {
+    completed.forEach(i => {
+      if (lessons[i]) lessons[i].el.classList.add('done');
+    });
+    updateProgress();
+    updateNav();
+    loadVideo(0);
+  }
+
+  function selectLesson(el, num, title, module) {
+    document.querySelectorAll('.lesson-item').forEach(l => l.classList.remove('active'));
+    el.classList.add('active');
+    currentIdx = lessons.findIndex(l => l.el === el);
+
+    // update text
+    document.getElementById('lesson-title').textContent = title;
+    document.getElementById('bc-module').textContent = module;
+
+    // always load video directly (no placeholder click needed)
+    loadVideo(currentIdx);
+
+    const done = completed.has(currentIdx);
+    const btn = document.getElementById('btn-done');
+    btn.className = done ? 'btn-done marked' : 'btn-done';
+    btn.innerHTML = done
+      ? '<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7L5.5 10.5L12 3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg> Concluída'
+      : '<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7L5.5 10.5L12 3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg> Marcar como concluída';
+
+    // auto-open module
+    const group = el.closest('.module-group');
+    if (!group.classList.contains('open')) {
+      group.classList.add('open');
+    }
+
+    updateNav();
+    el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    if (window.innerWidth <= 768) toggleSidebar();
+  }
+
+  function markDone() {
+    if (completed.has(currentIdx)) {
+      completed.delete(currentIdx);
+      lessons[currentIdx].el.classList.remove('done');
+    } else {
+      completed.add(currentIdx);
+      lessons[currentIdx].el.classList.add('done');
+    }
+    try { localStorage.setItem('completed', JSON.stringify([...completed])); } catch(e) {}
+    const btn = document.getElementById('btn-done');
+    const done = completed.has(currentIdx);
+    btn.className = done ? 'btn-done marked' : 'btn-done';
+    btn.innerHTML = done
+      ? '<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7L5.5 10.5L12 3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg> Concluída'
+      : '<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7L5.5 10.5L12 3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg> Marcar como concluída';
+    updateProgress();
+  }
+
+  function nextLesson() {
+    if (currentIdx < lessons.length - 1) {
+      const next = lessons[currentIdx + 1];
+      selectLesson(next.el, next.num, next.title, next.module);
+    }
+  }
+
+  function prevLesson() {
+    if (currentIdx > 0) {
+      const prev = lessons[currentIdx - 1];
+      selectLesson(prev.el, prev.num, prev.title, prev.module);
+    }
+  }
+
+  function updateNav() {
+    const prevEl = document.getElementById('nav-prev');
+    const nextEl = document.getElementById('nav-next');
+    const prevTitle = document.getElementById('nav-prev-title');
+    const nextTitle = document.getElementById('nav-next-title');
+
+    if (currentIdx > 0) {
+      prevTitle.textContent = lessons[currentIdx - 1].title;
+      prevEl.style.opacity = '1';
+      prevEl.style.pointerEvents = 'auto';
+    } else {
+      prevTitle.textContent = '—';
+      prevEl.style.opacity = '0.3';
+      prevEl.style.pointerEvents = 'none';
+    }
+
+    if (currentIdx < lessons.length - 1) {
+      nextTitle.textContent = lessons[currentIdx + 1].title;
+      nextEl.style.opacity = '1';
+      nextEl.style.pointerEvents = 'auto';
+    } else {
+      nextTitle.textContent = '—';
+      nextEl.style.opacity = '0.3';
+      nextEl.style.pointerEvents = 'none';
+    }
+  }
+
+  function updateProgress() {
+    const pct = Math.round((completed.size / lessons.length) * 100);
+    document.getElementById('prog-fill').style.width = pct + '%';
+    document.getElementById('prog-text').textContent = completed.size + '/' + lessons.length;
+  }
+
+  const videoLinks = [
+    '1_DieaCECwAq45RjHTFVGhwRRFM97JZev',
+    '1ic5NiGXXwMVWOz3086x3bZRAlwkSQ0zO',
+    '16tl9Oz7Pfnk1yiB_6sSOzHsjVuVRdHHf',
+    '1scCZQoLqN3QeU5SFsqDZ3QHZJE8T1KCp',
+    '1myVlSrZyspsYiUw1VSVZF7hB4C-C37us',
+    '1OgQtC4RXsHXg-ferCxiIX9NcOGXo-Ymw',
+    '1euDsxa7W05jWEENPdkV54n46xUDd2zeD',
+    '1oC94K3SNq3wSgTcd3jkxN4eN8Cb8-LV2',
+    '1Xm9GZIoQKslKodPKITVxILpCoIT4Av4j',
+    '14TfqwFIPO2Ba6bPStcpuvac-USExALQk',
+    '1FoNv39x0t3nDDwDsmMdkGYd4uT2kNSUH',
+    '1C1znMaNO98QYU2pEhT9mMkjHPPpdiXaq',
+    '1s_ZVA0ov1KABfRzLxLcY_dBJBZ42DuwO',
+    '1hz0vI6wZ5FlosBI9qN3asSPZcNHRhGbE',
+    '1Wk7vds3fTOiZlG_lfHH6Vv0nl-fFubqL',
+    '1iWZ9cYGmRYIIfVnRiPLgdNOvW4t72Flw',
+    '1aRHfgAnKGANvrjFJf_nTjHkTm_ko8NzK',
+    '1K4llSjNJdb_MXhI3cy-dyNIs6W-QZynt',
+    '1Ox2H66DWjD6v9osceOUtNAaj2oRRVNOX',
+    '1j5Uiu0i-6r-4BqjkP69xZqvKpNOD98rX',
+    '1pIIWTtgppEUeg4NqM-z9zVIv2W57n25p',
+    '1GIs-BtgN77Kzyu_xJ_Mm7e8WdX4OYv5k',
+    '1QXEpPLgTbO4fljwuMqRMAl_9wPKp2Dy7',
+    '1_TTG9op01zz1mcbhJCeGDTUKyvxTq7tN',
+    '14k4S2slhEDcRIPgfNdOelMCxCaokEco8',
+    '1HVfGcsmFvxOIXZ5Ac0Ej2oBzo36abR9v',
+    '1qYvq0Qqs0PCOP4H-a0pI_-L4DIt8ucCk',
+    '1Ty-l5C9etBciO8e-KbZfx_coWHZwVL_o',
+    '1AgJZgT_BAFkDrmBdDYh_U1YqHTL-K9SW',
+    '1HSGpxi6cX6lFjzQQxWrV3BVk41XeGB27'
+  ];
+
+  function loadVideo(idx) {
+    const id = videoLinks[idx];
+    const wrapper = document.querySelector('.video-wrapper');
+    wrapper.innerHTML = `<iframe src="https://drive.google.com/file/d/${id}/preview" allowfullscreen allow="autoplay" style="position:absolute;inset:0;width:100%;height:100%;border:none;"></iframe>`;
+  }
+
+  function openVideo() {
+    loadVideo(currentIdx);
+  }
+
+  function toggleModule(id) {
+    document.getElementById(id).classList.toggle('open');
+  }
+
+  function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('open');
+    document.getElementById('overlay').classList.toggle('open');
+  }
+
+  // ===== NETLIFY IDENTITY =====
+  netlifyIdentity.on('init', user => {
+    if (!user) {
+      document.getElementById('login-overlay').classList.remove('hidden');
+    } else {
+      document.getElementById('login-overlay').classList.add('hidden');
+    }
+  });
+
+  netlifyIdentity.on('login', user => {
+    document.getElementById('login-overlay').classList.add('hidden');
+    netlifyIdentity.close();
+  });
+
+  netlifyIdentity.on('logout', () => {
+    document.getElementById('login-overlay').classList.remove('hidden');
+  });
+
+  netlifyIdentity.init();
+  init();
+</script>
+</body>
+</html>
